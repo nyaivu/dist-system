@@ -1,0 +1,42 @@
+# --- Python Virtual Environments ---
+.venv/
+.venv-1/
+env/
+venv/
+ENV/
+
+# --- Python Artifacts ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# --- IDE Settings ---
+.vscode/
+.idea/
+
+# --- RPC Specific Artifacts ---
+# Mengabaikan file hasil generate protoc (gRPC) agar teman kelompok bisa generate sendiri
+# Jika ingin tetap diupload, hapus 2 baris di bawah ini
+processor_pb2.py
+processor_pb2_grpc.py
+
+# --- User Data & Uploads ---
+# Sangat penting: jangan upload file yang diupload user atau storage counter ke Git
+storage.json
+uploads/
+uploads_grpc/
+uploads_xmlrpc/
+rpc/gRPC/uploads/
+rpc/xml-rpc/uploads/
+
+# --- Media Files ---
+# Mengabaikan file test gambar agar repo tidak berat
+*.jpg
+*.png
+*.jpeg
+*.mp4
+
+# --- Operating System ---
+.DS_Store
+Thumbs.db
