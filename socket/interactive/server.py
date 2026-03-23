@@ -1,71 +1,62 @@
-import socket
-import threading
+from xmlrpc.server import SimpleXMLRPCServer
+import json
+import os
+import base64
+from PIL import Image
+import io
+import auth_helper
 
-HOST = "127.0.0.1"
-PORT = 12345
-clients = {} # Dictionary: { "Client-ID": socket_object }
-counter = 1
+class TraditionalRPCServer:
+    def __init__(self):
+        self.storage_file = "storage.json"
+        if not os.path.exists(self.storage_file):
+            with open(self.storage_file, 'w') as f:
+                json.dump({"counter": 0}, f)
 
-DATA_SIZE = 1024
+    def _update_counter(self):
+        with open(self.storage_file, 'r+') as f:
+            data = json.load(f)
+            data["counter"] += 1
+            f.seek(0)
+            json.dump(data, f)
+            f.truncate()
+        return data["counter"]
 
-def update_console():
-    """Refreshes the server view of active clients."""
-    print("\n" + "="*30)
-    print(f"ACTIVE CLIENTS: {list(clients.keys())}")
-    print("="*30 + "\n")
+    def call_function(self, token, func_name, params=None):
+        # 1. Implementasi Keamanan (Token/JWT)
+        is_valid, msg = auth_helper.verify_token(token)
+        if not is_valid:
+            return {"status": "error", "code": 401, "message": msg}
 
-def handle_client(conn, addr, client_id):
-    print(f"[LOG] {client_id} joined from {addr}")
-    
-    while True:
+        # 2. Routing Fungsi & Counter
+        if func_name == "increment":
+            new_val = self._update_counter()
+            return {"status": "success", "counter": new_val}
+
+        elif func_name == "upload_image":
+            return self.process_image(params)
+
+        else:
+            # Error Handling & Parameter Validation
+            return {"status": "error", "code": 404, "message": "Method not found"}
+
+    def process_image(self, b64_data):
         try:
-            data = conn.recv(DATA_SIZE).decode('utf-8')
-            if not data or data.lower() == 'exit':
-                break
+            # 3. RPC File Transfer & Metadata
+            img_data = base64.b64decode(b64_data)
+            img = Image.open(io.BytesIO(img_data))
             
-            # Expected format: "TargetID:Message"
-            if ":" in data:
-                target_id, message = data.split(":", 1)
-                target_id = target_id.strip()
-                
-                if target_id in clients:
-                    # The Server monitors the DM
-                    print(f"[SPY] {client_id} -> {target_id}: {message}")
-                    clients[target_id].send(f"[{client_id}]: {message}".encode('utf-8'))
-                else:
-                    conn.send(f"SERVER: Client {target_id} not found.".encode('utf-8'))
-            else:
-                conn.send("SERVER: Use format 'ID:Message'".encode('utf-8'))
-                
-        except:
-            break
+            metadata = {
+                "format": img.format,
+                "size_kb": round(len(img_data) / 1024, 2),
+                "resolution": f"{img.width}x{img.height}"
+            }
+            return {"status": "success", "metadata": metadata}
+        except Exception as e:
+            return {"status": "error", "code": 400, "message": f"Invalid image data: {str(e)}"}
 
-    # Cleanup
-    print(f"[DISCONNECT] {client_id} left.")
-    del clients[client_id]
-    conn.close()
-    update_console()
-
-def start_server():
-    global counter
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((HOST, PORT))
-    server.listen()
-    print(f"Server Monitoring Station active on {PORT}...")
-
-    while True:
-        conn, addr = server.accept()
-        client_id = f"Client-{counter}"
-        clients[client_id] = conn
-        counter += 1
-        
-        update_console()
-        
-        # Tell the client what their ID is
-        conn.send(f"ID:{client_id}".encode('utf-8'))
-        
-        thread = threading.Thread(target=handle_client, args=(conn, addr, client_id))
-        thread.start()
-
-if __name__ == "__main__":
-    start_server()
+# Jalankan Server
+server = SimpleXMLRPCServer(("localhost", 8000))
+server.register_instance(TraditionalRPCServer())
+print("Server Traditional RPC berjalan di port 8000...")
+server.serve_forever()

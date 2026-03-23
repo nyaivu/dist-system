@@ -1,38 +1,29 @@
-import socket
-import threading
+import xmlrpc.client
+import base64
+import auth_helper
 
-HOST = "127.0.0.1"
-PORT = 12345
-DATA_SIZE = 1024
+proxy = xmlrpc.client.ServerProxy("http://localhost:8000/")
 
-def receive_messages(s):
-    while True:
-        try:
-            msg = s.recv(DATA_SIZE).decode('utf-8')
-            print(f"\n{msg}\nSend to (ID:Message): ", end="")
-        except:
-            break
+# A. Simulasi Dapatkan Token
+token = auth_helper.generate_token()
+print(f"Token didapat: {token[:20]}...\n")
 
-def start_client():
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((HOST, PORT))
+# B. Panggil Counter
+print("--- Test Counter ---")
+response = proxy.call_function(token, "increment")
+print(f"Response: {response}\n")
 
-    # First message from server is our ID
-    init_msg = s.recv(DATA_SIZE).decode('utf-8')
-    if init_msg.startswith("ID:"):
-        my_id = init_msg.split(":")[1]
-        print(f"--- YOUR IDENTITY: {my_id} ---")
+# C. Panggil Upload Gambar
+print("--- Test Upload Gambar ---")
+try:
+    with open("test_image.jpg", "rb") as f: # Pastikan ada file ini
+        encoded_img = base64.b64encode(f.read()).decode('utf-8')
+    
+    response_img = proxy.call_function(token, "upload_image", encoded_img)
+    print(f"Metadata: {response_img}")
+except FileNotFoundError:
+    print("Error: File test_image.png tidak ditemukan untuk testing.")
 
-    threading.Thread(target=receive_messages, args=(s,), daemon=True).start()
-
-    print("Instructions: Type 'Client-X:Hello' to talk to someone.")
-    while True:
-        target_and_msg = input("Send to (ID:Message): ")
-        if target_and_msg.lower() == 'quit':
-            break
-        s.send(target_and_msg.encode('utf-8'))
-
-    s.close()
-
-if __name__ == "__main__":
-    start_client()
+# D. Test Error Handling (Token Salah)
+print("\n--- Test Token Invalid ---")
+print(proxy.call_function("token_salah", "increment"))
