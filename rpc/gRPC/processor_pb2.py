@@ -24,17 +24,21 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fprocessor.proto\"\x1d\n\x07RawData\x12\x12\n\ninput_text\x18\x01 \x01(\t\"=\n\rProcessedData\x12\x13\n\x0boutput_text\x18\x02 \x01(\t\x12\x17\n\x0f\x63haracter_count\x18\x03 \x01(\x05\x32<\n\rDataProcessor\x12+\n\rTransformText\x12\x08.RawData\x1a\x0e.ProcessedData\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fprocessor.proto\x12\tprocessor\"\x1f\n\x0e\x43ounterRequest\x12\r\n\x05token\x18\x01 \x01(\t\"7\n\x0f\x43ounterResponse\x12\r\n\x05\x63ount\x18\x01 \x01(\x05\x12\x15\n\rerror_message\x18\x02 \x01(\t\"E\n\x0b\x46ileRequest\x12\x14\n\x0c\x66ile_content\x18\x01 \x01(\x0c\x12\x11\n\tfile_name\x18\x02 \x01(\t\x12\r\n\x05token\x18\x03 \x01(\t\"Z\n\x0c\x46ileResponse\x12\x0e\n\x06\x66ormat\x18\x01 \x01(\t\x12\x0f\n\x07size_kb\x18\x02 \x01(\x02\x12\x12\n\nresolution\x18\x03 \x01(\t\x12\x15\n\rerror_message\x18\x04 \x01(\t2\x9c\x01\n\x10ProcessorService\x12I\n\x10IncrementCounter\x12\x19.processor.CounterRequest\x1a\x1a.processor.CounterResponse\x12=\n\nUploadFile\x12\x16.processor.FileRequest\x1a\x17.processor.FileResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'processor_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_RAWDATA']._serialized_start=19
-  _globals['_RAWDATA']._serialized_end=48
-  _globals['_PROCESSEDDATA']._serialized_start=50
-  _globals['_PROCESSEDDATA']._serialized_end=111
-  _globals['_DATAPROCESSOR']._serialized_start=113
-  _globals['_DATAPROCESSOR']._serialized_end=173
+  _globals['_COUNTERREQUEST']._serialized_start=30
+  _globals['_COUNTERREQUEST']._serialized_end=61
+  _globals['_COUNTERRESPONSE']._serialized_start=63
+  _globals['_COUNTERRESPONSE']._serialized_end=118
+  _globals['_FILEREQUEST']._serialized_start=120
+  _globals['_FILEREQUEST']._serialized_end=189
+  _globals['_FILERESPONSE']._serialized_start=191
+  _globals['_FILERESPONSE']._serialized_end=281
+  _globals['_PROCESSORSERVICE']._serialized_start=284
+  _globals['_PROCESSORSERVICE']._serialized_end=440
 # @@protoc_insertion_point(module_scope)

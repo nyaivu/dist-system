@@ -17,7 +17,7 @@ class TraditionalRPCServer:
             print(f"Folder '{self.upload_dir}' telah dibuat.")
 
         # 3. Inisialisasi storage counter (seperti yang sudah kamu buat sebelumnya)
-        self.storage_file = "storage.json"
+        self.storage_file = "../../storage.json"
         if not os.path.exists(self.storage_file) or os.path.getsize(self.storage_file) == 0:
             with open(self.storage_file, 'w') as f:
                 json.dump({"counter": 0}, f)

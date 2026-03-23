@@ -25,7 +25,7 @@ if _version_not_supported:
     )
 
 
-class DataProcessorStub(object):
+class ProcessorServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -34,44 +34,59 @@ class DataProcessorStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.TransformText = channel.unary_unary(
-                '/DataProcessor/TransformText',
-                request_serializer=processor__pb2.RawData.SerializeToString,
-                response_deserializer=processor__pb2.ProcessedData.FromString,
+        self.IncrementCounter = channel.unary_unary(
+                '/processor.ProcessorService/IncrementCounter',
+                request_serializer=processor__pb2.CounterRequest.SerializeToString,
+                response_deserializer=processor__pb2.CounterResponse.FromString,
+                _registered_method=True)
+        self.UploadFile = channel.unary_unary(
+                '/processor.ProcessorService/UploadFile',
+                request_serializer=processor__pb2.FileRequest.SerializeToString,
+                response_deserializer=processor__pb2.FileResponse.FromString,
                 _registered_method=True)
 
 
-class DataProcessorServicer(object):
+class ProcessorServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def TransformText(self, request, context):
-        """The Remote Procedure
-        """
+    def IncrementCounter(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UploadFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_DataProcessorServicer_to_server(servicer, server):
+def add_ProcessorServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'TransformText': grpc.unary_unary_rpc_method_handler(
-                    servicer.TransformText,
-                    request_deserializer=processor__pb2.RawData.FromString,
-                    response_serializer=processor__pb2.ProcessedData.SerializeToString,
+            'IncrementCounter': grpc.unary_unary_rpc_method_handler(
+                    servicer.IncrementCounter,
+                    request_deserializer=processor__pb2.CounterRequest.FromString,
+                    response_serializer=processor__pb2.CounterResponse.SerializeToString,
+            ),
+            'UploadFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.UploadFile,
+                    request_deserializer=processor__pb2.FileRequest.FromString,
+                    response_serializer=processor__pb2.FileResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'DataProcessor', rpc_method_handlers)
+            'processor.ProcessorService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('DataProcessor', rpc_method_handlers)
+    server.add_registered_method_handlers('processor.ProcessorService', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class DataProcessor(object):
+class ProcessorService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def TransformText(request,
+    def IncrementCounter(request,
             target,
             options=(),
             channel_credentials=None,
@@ -84,9 +99,36 @@ class DataProcessor(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/DataProcessor/TransformText',
-            processor__pb2.RawData.SerializeToString,
-            processor__pb2.ProcessedData.FromString,
+            '/processor.ProcessorService/IncrementCounter',
+            processor__pb2.CounterRequest.SerializeToString,
+            processor__pb2.CounterResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def UploadFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/processor.ProcessorService/UploadFile',
+            processor__pb2.FileRequest.SerializeToString,
+            processor__pb2.FileResponse.FromString,
             options,
             channel_credentials,
             insecure,

@@ -1,15 +1,32 @@
 syntax = "proto3";
 
-service DataProcessor {
-  // The Remote Procedure
-  rpc TransformText (RawData) returns (ProcessedData) {}
+package processor;
+
+// Pesan untuk Counter
+message CounterRequest {
+  string token = 1;
 }
 
-message RawData {
-  string input_text = 1;
+message CounterResponse {
+  int32 count = 1;
+  string error_message = 2;
 }
 
-message ProcessedData {
-  string output_text = 2;
-  int32 character_count = 3;
+// Pesan untuk Upload File
+message FileRequest {
+  bytes file_content = 1;
+  string file_name = 2;
+  string token = 3;
+}
+
+message FileResponse {
+  string format = 1;
+  float size_kb = 2;
+  string resolution = 3;
+  string error_message = 4; // Untuk error handling (Token invalid, dll)
+}
+
+service ProcessorService {
+  rpc IncrementCounter(CounterRequest) returns (CounterResponse);
+  rpc UploadFile(FileRequest) returns (FileResponse);
 }
