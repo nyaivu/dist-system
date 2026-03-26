@@ -12,7 +12,7 @@ def run_xml_rpc():
     print("\n--- Testing XML-RPC File Upload ---")
     try:
         with open("./test_image.jpg", "rb") as f:
-            # WAJIB: Bungkus biner ke dalam objek Binary
+            # Bungkus biner ke dalam objek Binary
             binary_data = xmlrpc.client.Binary(f.read())
             
         res_upload = proxy.execute_action(token, "upload", binary_data)

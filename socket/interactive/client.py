@@ -33,6 +33,7 @@ def run_client():
         
         # 6. Panggil FUNGSI UTAMA di Server via RPC
         # Parameter: token, nama_file, data_base64
+        response = proxy.call_function(token, "increment")
         response = proxy.upload_image(token, image_filename, encoded_string)
         
         # 7. Tampilkan Response dari Server
